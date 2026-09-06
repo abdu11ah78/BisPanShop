@@ -44,11 +44,26 @@ export default function AdminSettingsPage() {
     contactBgUrl: siteSettings.contactBgUrl || "/WebsiteData/IMG_6358.PNG",
   });
 
-  const [passwordForm, setPasswordForm] = useState({
+  const [securityForm, setSecurityForm] = useState({
+    username: "hakeemikram",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("hi_herbs_admin_creds");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.username) {
+          setSecurityForm((prev) => ({ ...prev, username: parsed.username }));
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
 
   useEffect(() => {
     setSiteForm({
@@ -102,16 +117,53 @@ export default function AdminSettingsPage() {
 
   const handlePasswordSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passwordForm.newPassword) {
-      showToast("Please enter a new password", "error");
+
+    let currentCreds = { username: "hakeemikram", password: "ali@123" };
+    try {
+      const stored = localStorage.getItem("hi_herbs_admin_creds");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.username && parsed?.password) {
+          currentCreds = parsed;
+        }
+      }
+    } catch (err) {
+      console.error("Error reading admin credentials:", err);
+    }
+
+    if (!securityForm.currentPassword) {
+      showToast("Please enter your current password to make changes", "error");
       return;
     }
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+
+    if (securityForm.currentPassword !== currentCreds.password) {
+      showToast("Current password is incorrect!", "error");
+      return;
+    }
+
+    const newUsername = securityForm.username.trim() || currentCreds.username;
+    const finalPassword = securityForm.newPassword ? securityForm.newPassword : currentCreds.password;
+
+    if (securityForm.newPassword && securityForm.newPassword !== securityForm.confirmPassword) {
       showToast("New passwords do not match!", "error");
       return;
     }
-    showToast("Admin password updated successfully!", "success");
-    setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+
+    if (securityForm.newPassword && securityForm.newPassword.length < 4) {
+      showToast("New password must be at least 4 characters long!", "error");
+      return;
+    }
+
+    const updatedCreds = { username: newUsername, password: finalPassword };
+    localStorage.setItem("hi_herbs_admin_creds", JSON.stringify(updatedCreds));
+
+    showToast(`Admin credentials updated successfully! Username: ${newUsername}`, "success");
+    setSecurityForm({
+      username: newUsername,
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
   };
 
   return (
@@ -528,32 +580,45 @@ export default function AdminSettingsPage() {
       <div className="bg-brand-softDark/60 border border-brand-dark/60 rounded-2xl p-6 space-y-4 shadow-xl">
         <div className="border-b border-brand-dark pb-3">
           <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <KeyRound className="w-4.5 h-4.5 text-brand-gold" /> Admin Portal Password
+            <KeyRound className="w-4.5 h-4.5 text-brand-gold" /> Admin Credentials & Security
           </h2>
           <p className="text-sm text-gray-300 mt-0.5">
-            Update credentials for admin portal access. (Default: hiherbs2026 / 123456)
+            Dynamically update admin portal username and password.
           </p>
         </div>
 
         <form onSubmit={handlePasswordSave} className="space-y-4 text-sm max-w-md">
           <div>
-            <label className="block text-gray-200 font-bold mb-1">Current Password</label>
+            <label className="block text-gray-200 font-bold mb-1">Admin Username</label>
             <input
-              type="password"
-              placeholder="••••••••"
-              value={passwordForm.currentPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+              type="text"
+              required
+              placeholder=""
+              value={securityForm.username}
+              onChange={(e) => setSecurityForm({ ...securityForm, username: e.target.value })}
               className="w-full px-3.5 py-2.5 rounded-xl bg-brand-deepest border border-brand-dark text-white text-sm focus:border-brand-gold focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-gray-200 font-bold mb-1">New Password</label>
+            <label className="block text-gray-200 font-bold mb-1">Current Password *</label>
             <input
               type="password"
-              placeholder="••••••••"
-              value={passwordForm.newPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+              required
+              placeholder=""
+              value={securityForm.currentPassword}
+              onChange={(e) => setSecurityForm({ ...securityForm, currentPassword: e.target.value })}
+              className="w-full px-3.5 py-2.5 rounded-xl bg-brand-deepest border border-brand-dark text-white text-sm focus:border-brand-gold focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-200 font-bold mb-1">New Password (Leave blank to keep current)</label>
+            <input
+              type="password"
+              placeholder=""
+              value={securityForm.newPassword}
+              onChange={(e) => setSecurityForm({ ...securityForm, newPassword: e.target.value })}
               className="w-full px-3.5 py-2.5 rounded-xl bg-brand-deepest border border-brand-dark text-white text-sm focus:border-brand-gold focus:outline-none"
             />
           </div>
@@ -562,9 +627,9 @@ export default function AdminSettingsPage() {
             <label className="block text-gray-200 font-bold mb-1">Confirm New Password</label>
             <input
               type="password"
-              placeholder="••••••••"
-              value={passwordForm.confirmPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+              placeholder=""
+              value={securityForm.confirmPassword}
+              onChange={(e) => setSecurityForm({ ...securityForm, confirmPassword: e.target.value })}
               className="w-full px-3.5 py-2.5 rounded-xl bg-brand-deepest border border-brand-dark text-white text-sm focus:border-brand-gold focus:outline-none"
             />
           </div>

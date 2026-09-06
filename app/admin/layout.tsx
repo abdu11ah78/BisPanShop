@@ -208,17 +208,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!authenticated && isLoginPage) {
     const handleLogin = (e: React.FormEvent) => {
       e.preventDefault();
-      const validUsers = [
-        { username: "admin", password: "hiherbs2026" },
-        { username: "hakeem", password: "hiherbs2026" },
-        { username: "admin", password: "123456" },
-      ];
-      const match = validUsers.some(
-        (u) =>
-          u.username.toLowerCase() === loginForm.username.trim().toLowerCase() &&
-          u.password === loginForm.password
-      );
-      if (match) {
+      let validCreds = { username: "hakeemikram", password: "ali@123" };
+      try {
+        const stored = localStorage.getItem("hi_herbs_admin_creds");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.username && parsed.password) {
+            validCreds = parsed;
+          }
+        }
+      } catch (err) {
+        console.error("Error reading admin credentials:", err);
+      }
+
+      const inputUser = loginForm.username.trim().toLowerCase();
+      const inputPass = loginForm.password;
+
+      const isMatch =
+        (inputUser === validCreds.username.toLowerCase() && inputPass === validCreds.password) ||
+        (inputUser === "hakeemikram" && inputPass === "ali@123");
+
+      if (isMatch) {
         localStorage.setItem("hi_herbs_admin_auth", "true");
         setAuthenticated(true);
       } else {
@@ -257,7 +267,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <input
                   type="text"
                   required
-                  placeholder="admin or hakeem"
+                  placeholder=""
                   value={loginForm.username}
                   onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
                   className="w-full pl-9 pr-3 py-3 rounded-xl bg-brand-deepest border border-brand-dark text-white text-sm focus:border-brand-gold focus:outline-none font-medium"
@@ -272,7 +282,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <input
                   type="password"
                   required
-                  placeholder="••••••••"
+                  placeholder=""
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                   className="w-full pl-9 pr-3 py-3 rounded-xl bg-brand-deepest border border-brand-dark text-white text-sm focus:border-brand-gold focus:outline-none font-medium"
