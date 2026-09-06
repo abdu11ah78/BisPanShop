@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/db";
-import { MOCK_PRODUCTS } from "@/lib/mockData";
+import { store } from "@/lib/store";
+import { Product } from "@/lib/types";
 
 export async function GET() {
   try {
@@ -9,36 +10,62 @@ export async function GET() {
       return NextResponse.json(dbProducts);
     }
   } catch (error) {
-    console.warn("Using fallback catalog dataset:", error);
+    console.warn("Using in-memory store fallback for products");
   }
-  return NextResponse.json(MOCK_PRODUCTS);
+  return NextResponse.json(store.getProducts());
 }
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { category_id, brand, name_en, name_ur, slug, sku, description, price, weight_options_json, stock_quantity, images_json } = body;
+    const newProduct: Product = {
+      id: Date.now(),
+      category_id: Number(body.category_id) || 1,
+      brand: body.brand || "Hi Herbs",
+      name_en: body.name_en || "New Herbal Product",
+      name_ur: body.name_ur || "",
+      slug: body.slug || `product-${Date.now()}`,
+      sku: body.sku || `HH-PROD-${Math.floor(100 + Math.random() * 900)}`,
+      description: body.description || "",
+      benefits: body.benefits || "",
+      how_to_use: body.how_to_use || "",
+      ingredients: body.ingredients || "",
+      price: Number(body.price) || 100,
+      weight_options_json: body.weight_options_json || [{ label: "100g", price: Number(body.price) || 100 }],
+      stock_quantity: Number(body.stock_quantity) || 50,
+      images_json: body.images_json || ["/WebsiteData/logo.jpeg"],
+      is_featured: Boolean(body.is_featured),
+      category_name: body.category_name || "General",
+    };
 
-    const sql = `
-      INSERT INTO products (category_id, brand, name_en, name_ur, slug, sku, description, price, weight_options_json, stock_quantity, images_json)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+    store.addProduct(newProduct);
+    return NextResponse.json({ success: true, product: newProduct });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
 
-    const result = await query(sql, [
-      category_id,
-      brand || 'Hi Herbs',
-      name_en,
-      name_ur || null,
-      slug,
-      sku,
-      description || '',
-      price,
-      JSON.stringify(weight_options_json || []),
-      stock_quantity || 100,
-      JSON.stringify(images_json || [])
-    ]);
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, ...updates } = body;
+    if (!id) return NextResponse.json({ error: "Missing product id" }, { status: 400 });
 
-    return NextResponse.json({ success: true, result });
+    store.updateProduct(Number(id), updates);
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+    store.deleteProduct(Number(id));
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

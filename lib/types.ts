@@ -102,3 +102,19 @@ export interface ConsultationRecord {
   status: 'Pending' | 'Confirmed' | 'Completed';
   created_at: string;
 }
+
+export interface SiteSettings {
+  siteName: string;
+  siteSubtitle: string;
+  logoUrl: string;
+  phone1: string;
+  phone2: string;
+  registrationNo: string;
+  address: string;
+  // Dynamic Section Backgrounds
+  heroBgUrl?: string;
+  categoriesBgUrl?: string;
+  featuredBgUrl?: string;
+  heritageBgUrl?: string;
+  contactBgUrl?: string;
+}

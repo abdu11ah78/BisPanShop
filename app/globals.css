@@ -2,48 +2,288 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #1E3E2E;
-}
+/* ---- Base Styles ---- */
+@layer base {
+  :root {
+    --brand-light: #52B882;
+    --brand-medium: #3A9D6A;
+    --brand-dark: #2A5C43;
+    --brand-deep: #1E3E2E;
+    --brand-deepest: #12271D;
+    --brand-soft-dark: #183225;
+    --brand-card-bg: #162E22;
+    --brand-gold: #E5BD47;
+    --brand-gold-shaded: #C9A033;
+  }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
-}
+  /* Dark theme (default) */
+  html.dark body {
+    @apply bg-brand-deepest text-gray-100;
+  }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* Light theme */
+  html.light body {
+    background-color: #f8fafc;
+    color: #12271d;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply min-h-screen flex flex-col;
+  }
+
+  ::selection {
+    background-color: #E5BD47;
+    color: #1E3E2E;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #12271D;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2A5C43;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #52B882;
   }
 }
 
-/* Glassmorphism Cards */
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(82, 184, 130, 0.2);
+/* ---- Utility Classes ---- */
+@layer utilities {
+  .container-max {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(30, 62, 46, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(82, 184, 130, 0.15);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(42, 92, 67, 0.15);
+  }
+
+  .glass-strong {
+    background: rgba(18, 39, 29, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(229, 189, 71, 0.2);
+  }
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Gradient Backgrounds */
+  .bg-hero-gradient {
+    background: radial-gradient(ellipse at 30% 50%, rgba(82, 184, 130, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(229, 189, 71, 0.08) 0%, transparent 50%),
+                #12271D;
+  }
+
+  .bg-section-gradient {
+    background: linear-gradient(180deg, #12271D 0%, #183225 50%, #12271D 100%);
+  }
+
+  /* Gold Gradient Text */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #E5BD47 0%, #C9A033 50%, #E5BD47 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-green-gradient {
+    background: linear-gradient(135deg, #52B882 0%, #3A9D6A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow Effects */
+  .glow-green {
+    box-shadow: 0 0 30px rgba(82, 184, 130, 0.25);
+  }
+  .glow-gold {
+    box-shadow: 0 0 30px rgba(229, 189, 71, 0.25);
+  }
+
+  /* Card Styles */
+  .card-dark {
+    @apply bg-brand-softDark border border-brand-dark/60 rounded-2xl;
+  }
+  .card-glass {
+    @apply glass rounded-2xl;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-brand-gold/40;
+  }
+
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-brand-gold text-brand-deep font-bold px-6 py-3 rounded-xl hover:bg-brand-goldShaded transition-all duration-200 shadow-lg;
+  }
+  .btn-secondary {
+    @apply border border-brand-gold/40 text-brand-gold bg-transparent font-bold px-6 py-3 rounded-xl hover:bg-brand-gold hover:text-brand-deep transition-all duration-200;
+  }
+  .btn-ghost {
+    @apply text-gray-300 hover:text-white hover:bg-brand-dark/50 px-4 py-2 rounded-lg transition-all duration-200;
+  }
+
+  /* Input Styles */
+  .input-dark {
+    @apply bg-brand-deepest border border-brand-dark text-white placeholder:text-gray-500 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-brand-gold transition-all duration-200 w-full;
+  }
+  .input-light {
+    @apply bg-white border border-gray-200 text-brand-deep placeholder:text-gray-400 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-brand-dark transition-all duration-200 w-full;
+  }
+
+  /* Section Spacing */
+  .section-y {
+    @apply py-16 md:py-24;
+  }
 }
 
-.glass-card-dark {
-  background: rgba(30, 62, 46, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(229, 189, 71, 0.3);
+/* ---- Light Theme Overrides (Public Website & Admin Panel) ---- */
+html.light {
+  color-scheme: light;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+html.light body {
+  background-color: #f8fafc !important;
+  color: #12271d !important;
 }
-::-webkit-scrollbar-track {
-  background: #F0F7F3;
+
+/* Public gradients in Light mode */
+html.light .bg-hero-gradient {
+  background: radial-gradient(ellipse at 30% 50%, rgba(82, 184, 130, 0.1) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 80%, rgba(229, 189, 71, 0.1) 0%, transparent 50%),
+              #f8fafc !important;
 }
-::-webkit-scrollbar-thumb {
-  background: #3A9D6A;
-  border-radius: 4px;
+
+html.light .bg-section-gradient {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%) !important;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #2A5C43;
+
+/* Header & Card surface overrides in Light mode */
+html.light .bg-brand-softDark,
+html.light .bg-brand-softDark\/60,
+html.light .bg-brand-softDark\/70,
+html.light .bg-brand-softDark\/80,
+html.light .bg-brand-softDark\/90,
+html.light .bg-brand-deepest,
+html.light .bg-brand-deepest\/80,
+html.light .bg-brand-deepest\/90,
+html.light .bg-brand-deep\/95,
+html.light .bg-brand-deep\/98,
+html.light .bg-brand-deep {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #12271d !important;
+}
+
+/* Admin light theme layout overrides */
+html.light .admin-sidebar {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light .admin-topbar {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light .admin-sidebar a,
+html.light .admin-sidebar button {
+  color: #334155 !important;
+}
+
+html.light .admin-sidebar a:hover,
+html.light .admin-sidebar button:hover {
+  background-color: #f1f5f9 !important;
+  color: #12271d !important;
+}
+
+/* High contrast typography in light mode */
+html.light .text-white {
+  color: #0f172a !important;
+}
+
+html.light .text-gray-100,
+html.light .text-gray-200,
+html.light .text-gray-300 {
+  color: #334155 !important;
+}
+
+html.light .text-gray-400,
+html.light .text-gray-500 {
+  color: #64748b !important;
+}
+
+/* Borders in light mode */
+html.light .border-brand-dark,
+html.light .border-brand-dark\/40,
+html.light .border-brand-dark\/50,
+html.light .border-brand-dark\/60,
+html.light .border-brand-dark\/80 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Form controls in light mode */
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Tables & Modals in light mode */
+html.light th {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html.light td {
+  border-color: #f1f5f9 !important;
+}
+
+/* Badges & Accent colors in light mode */
+html.light .text-brand-gold {
+  color: #b48505 !important;
+}
+
+html.light .bg-brand-gold {
+  background-color: #e5bd47 !important;
+  color: #12271d !important;
+}
+
+html.light .bg-brand-dark {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
 }

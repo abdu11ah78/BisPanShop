@@ -1,13 +1,39 @@
 import type { Metadata } from "next";
+import { Barlow } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/CartContext";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { AppProvider } from "@/lib/AppContext";
+import RootLayoutClient from "@/components/RootLayoutClient";
+
+const barlow = Barlow({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-barlow",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Hi Herbs (by Bismillah Pansar Store) | 100% Pure Herbal Solutions & Oils",
-  description: "Official online store for Hi Herbs by Bismillah Pansar Store (Hakeem Muhammad Ikram). Pure cold-pressed oils, Unani majoons, herbal hair care, organic preserves & raw herbs in Lahore, Pakistan.",
-  keywords: ["Hi Herbs", "Bismillah Pansar Store", "Hakeem Ikram", "Herbal Hair Oil", "Onion Oil", "Flora Roots", "Pansar Lahore", "Unani Medicine"],
+  title: "Hi Herbs — 100% Pure Herbal Solutions & Oils | Bismillah Pansar Store",
+  description:
+    "Official online store for Hi Herbs by Bismillah Pansar Store (Hakeem Muhammad Ikram). Pure cold-pressed oils, Unani majoons, herbal hair care, organic preserves & raw herbs. Lahore, Pakistan.",
+  keywords: [
+    "Hi Herbs",
+    "Bismillah Pansar Store",
+    "Hakeem Ikram",
+    "Herbal Hair Oil",
+    "Onion Oil",
+    "Flora Roots",
+    "Pansar Lahore",
+    "Unani Medicine",
+    "Herbal Products Pakistan",
+  ],
+  openGraph: {
+    title: "Hi Herbs — Pure Herbal Solutions",
+    description: "Authentic Unani & Herbal remedies from Hakeem Muhammad Ikram, Lahore.",
+    siteName: "Hi Herbs",
+    locale: "en_PK",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -16,13 +42,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col antialiased bg-white text-brand-deep">
-        <CartProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </CartProvider>
+    <html lang="en" dir="ltr" className={`${barlow.variable} dark`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var t = localStorage.getItem('hi_herbs_theme') || 'dark';
+                document.documentElement.className = (document.documentElement.className || '').replace(/(dark|light)/g,'').trim() + ' ' + t;
+                var l = localStorage.getItem('hi_herbs_lang') || 'en';
+                document.documentElement.lang = l === 'ur' ? 'ur' : 'en';
+                document.documentElement.dir = l === 'ur' ? 'rtl' : 'ltr';
+              } catch(e) {}
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen flex flex-col font-sans antialiased">
+        <AppProvider>
+          <CartProvider>
+            <RootLayoutClient>{children}</RootLayoutClient>
+          </CartProvider>
+        </AppProvider>
       </body>
     </html>
   );

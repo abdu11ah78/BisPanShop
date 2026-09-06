@@ -15,20 +15,21 @@ const config: Config = {
           medium: "#3A9D6A",     // Secondary Accent
           dark: "#2A5C43",       // Dark Accent (Base Green)
           deep: "#1E3E2E",       // Deep Neutral (Forest Green)
+          deepest: "#12271D",    // Deepest Forest Background
           gold: "#E5BD47",       // Warm Highlight (Gold/Yellow)
           goldShaded: "#C9A033", // Shaded Gold
-          cream: "#F8F9FA",      // Light background
-          softBg: "#F0F7F3",     // Soft green tint background
+          softDark: "#183225",   // Soft dark card surface
+          cardBg: "#162E22",     // Dark card surface
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
+        sans: ["var(--font-barlow)", "Barlow", "system-ui", "sans-serif"],
+        serif: ["var(--font-barlow)", "Barlow", "Georgia", "serif"],
       },
       boxShadow: {
-        glass: "0 8px 32px 0 rgba(30, 62, 46, 0.12)",
-        glow: "0 0 20px rgba(82, 184, 130, 0.4)",
-        goldGlow: "0 0 20px rgba(229, 189, 71, 0.3)",
+        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+        glow: "0 0 25px rgba(82, 184, 130, 0.3)",
+        goldGlow: "0 0 25px rgba(229, 189, 71, 0.35)",
       },
     },
   },

@@ -10,17 +10,20 @@ export function formatPrice(amount: number): string {
   return `Rs. ${amount.toLocaleString('en-PK')}`;
 }
 
-export function generateWhatsAppPayload(data: {
-  orderNumber: string;
-  customerName: string;
-  phone: string;
-  shippingAddress: string;
-  city: string;
-  paymentMethod: string;
-  items: CartItem[];
-  grandTotal: number;
-}): string {
-  const adminWhatsAppPhone = "923214544949";
+export function generateWhatsAppPayload(
+  data: {
+    orderNumber: string;
+    customerName: string;
+    phone: string;
+    shippingAddress: string;
+    city: string;
+    paymentMethod: string;
+    items: CartItem[];
+    grandTotal: number;
+  },
+  targetPhone?: string
+): string {
+  const adminWhatsAppPhone = targetPhone ? targetPhone.replace(/[^0-9]/g, "") : "923214544949";
   
   let itemsText = "";
   data.items.forEach((item) => {
