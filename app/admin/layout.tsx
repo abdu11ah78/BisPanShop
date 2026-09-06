@@ -40,7 +40,7 @@ function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean; setColl
 
   const handleLogout = () => {
     localStorage.removeItem("hi_herbs_admin_auth");
-    router.push("/admin");
+    window.location.href = "/admin";
   };
 
   return (
@@ -180,9 +180,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const auth = localStorage.getItem("hi_herbs_admin_auth");
     if (auth === "true") {
       setAuthenticated(true);
-    } else if (pathname !== "/admin") {
-      // Unauthenticated access to any admin sub-route → redirect to login
-      router.replace("/admin");
+    } else {
+      setAuthenticated(false);
+      if (pathname !== "/admin") {
+        router.replace("/admin");
+      }
     }
     setLoading(false);
   }, [pathname, router]);
